@@ -25,5 +25,7 @@ What did I complete? Route/endpoint List, Api, Project structure, Proposed Relat
 What am I working on next?  Figma Design
 What is blocking me?  i need to see other examples or a templates
 
+# presentation
+https://docs.google.com/presentation/d/1SMZFTYyJuKsNJ37aSa3UvMXxPtapxYtl2Gf5AfCqaOw/edit?usp=sharing
 
 
