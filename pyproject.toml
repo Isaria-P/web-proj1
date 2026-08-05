@@ -4,4 +4,15 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "flask>=3.1.1",
+]
+
+[tool.ruff.lint]
+select = ["ANN", "ARG", "N", "E", "PLW0603", "SIM", "B", "F"]
+ignore = ["ANN204"]
+exclude = ["routes.py", "__init__.py"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

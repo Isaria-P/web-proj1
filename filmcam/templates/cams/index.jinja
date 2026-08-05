@@ -1,1 +1,33 @@
-<h1>index</h1>
+{% extends "base.jinja" %}
+{% block title %}Home{% endblock %}
+{% block main %}
+    <h2>Latest Cams</h2>
+    {% if cams %}
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Image</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th>Created at</th>
+            </tr>
+            {% for cam in cams %}
+                <tr>
+                    <td>
+                        <a href="/cam/view/{{ cam.id }}">{{
+                            cam.title
+                        }}</a>
+                    </td>
+                    <td>{{ cam.content }}</td>
+                    <td>{{ cam.img }}</td>
+                    <td>{{ cam.category }}</td>
+                    <td>{{ cam.author }}</td>
+                    <td>#{{ cam.created }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>There's nothing to see here... yet!</p>
+    {% endif %}
+{% endblock %}

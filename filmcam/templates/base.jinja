@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/css/main.css">
+        <link
+            rel="shortcut icon"
+            href="/static/img/favicon.ico"
+            type="image/x-icon"
+        >
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700"
+        >
+        <title>{% block title %}{% endblock %} - Filmcam</title>
+    </head>
+    <body>
+        <header>
+            <h1><a href="/">Filmcam</a></h1>
+        </header>
+        {% include 'partials/nav.jinja' %}
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+        <footer>
+            Powered by <a href="https://flask.palletsprojects.com/en/stable/"
+            >Flask</a>
+        </footer>
+    </body>
+</html>
