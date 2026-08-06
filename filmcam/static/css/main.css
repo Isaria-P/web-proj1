@@ -222,10 +222,56 @@ color: #c0392b;
     height: 266px;
 }
 
+a.button, button {
+    background-color: #e9e4bd;
+    border-radius: 3px;
+    color: #131313;
+    padding: 18px 27px;
+    border: none;
+    display: inline-block;
+    margin-top: 18px;
+    font-weight: 700;
+}
+
+label {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+fieldset {
+    border: 0;
+}
+
+label input:not([type="radio"]), label textarea {
+    margin-top: 0.5rem;
+}
+
+legend {
+    margin-bottom: 0.5rem;
+}
+
+fieldset label {
+    display: inline;
+}
+
+form button {
+    margin-top: 2rem;
+}
+
+form input[type="text"], form input[type="password"], form input[type="email"] {
+    padding: 0.75em 18px;
+    width: 100%;
+}
 .cam {
     background-color: #131313;
     border: 1px solid #e9e4bd;
     border-radius: 3px;
+}
+
+textarea {
+    padding: 18px;
+    width: 100%;
+    height: 266px;
 }
 
 .cam pre {
@@ -268,7 +314,7 @@ div.error {
 }
 
 table {
-    background: white;
+    background: 131313;
     border: 1px solid #e4e5e7;
     border-collapse: collapse;
     width: 100%;

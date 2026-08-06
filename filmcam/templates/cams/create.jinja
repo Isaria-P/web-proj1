@@ -1,0 +1,70 @@
+{% extends "base.jinja" %}
+{% block title %}Create a New Cam Post{% endblock %}
+{% block main %}
+    <form action="{{ url_for('cam.create') }}" method="POST">
+        <label>
+            Title:
+            {% if form.errors.get("title") %}
+                <p class="error">{{ form.errors["title"] }}</p>
+            {% endif %}
+            <input type="text" name="title" value="{{ form.title }}" required>
+        </label>
+        <label>
+            Content:
+            {% if form.errors.get("content") %}
+                <p class="error">{{ form.errors["content"] }}</p>
+            {% endif %}
+            <textarea name="content" required>{{ form.content }}</textarea>
+        </label>
+        <label>
+            Image:
+            {% if form.errors.get("img") %}
+                <p class="error">{{ form.errors["img"] }}</p>
+            {% endif %}
+            <input type="file" name="img" accept="image/*" value="{{ form.img }}" required>
+        </label>
+        <fieldset>
+            <legend>Category:</legend>
+            {% if form.errors.get("category") %}
+                <p class="error">{{ form.errors["category"] }}</p>
+            {% endif %}
+            <label>
+                <input
+                    type="radio"
+                    name="category"
+                    value="35 mm"
+                    {% if form.category == "35mm"}
+                        checked
+                    {% endif %}
+                    required
+                >
+                35 mm
+            </label>
+            <label>
+                <input
+                    type="radio"
+                    name="category"
+                    value="medium format"
+                    {% if form.category == "medium format"}
+                        checked
+                    {% endif %}
+                    required
+                >
+                Medium Format
+            </label>
+            <label>
+                <input
+                    type="radio"
+                    name="category"
+                    value="large format"
+                    {% if form.category == "Large format"}
+                        checked
+                    {% endif %}
+                    required
+                >
+                Large Format
+            </label>
+        </fieldset>
+        <button>Submit</button>
+    </form>
+{% endblock %}

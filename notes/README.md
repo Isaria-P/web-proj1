@@ -25,6 +25,37 @@ What did I complete? Route/endpoint List, Api, Project structure, Proposed Relat
 What am I working on next?  Figma Design
 What is blocking me?  i need to see other examples or a templates
 
+day 5:
+What did I complete? researching modeules
+
+What am I working on next?  Figma Design
+What is blocking me?  i need to see other examples or a templates
+
+day 6:
+What did I complete?setting up project
+
+What am I working on next?  Figma Design
+What is blocking me?  i need to see other examples or a templates
+
+day 7 tues 
+What did I complete? worked on database
+What am I working on next? fixing errors
+What is blocking me? having errors
+
+
+day 8 wed 
+What did I complete? fixing modules errors
+What am I working on next? working on fom validation
+What is blocking me? time
+
+day 9 thurs 
+What did I complete? validation
+What am I working on next? errors
+What is blocking me? 
+
+
+
+
 # presentation
 https://docs.google.com/presentation/d/1SMZFTYyJuKsNJ37aSa3UvMXxPtapxYtl2Gf5AfCqaOw/edit?usp=sharing
 
