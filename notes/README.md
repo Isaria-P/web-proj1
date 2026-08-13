@@ -53,6 +53,21 @@ What did I complete? validation
 What am I working on next? errors
 What is blocking me? 
 
+day 10 Monday 
+What did I complete? prototyping research, planning
+What am I working on next? errors validation
+What is blocking me? i not sure what im doing wrong
+
+day 11 tues 
+What am I working on next? errors validation
+What is blocking me? i not sure what im doing wrong, getting annoyed getting confused
+
+day 12 wedn 
+What did I complete? fixed database error
+What am I working on next? working on fixing the program in time for the presentation 
+What is blocking me? having enough time
+
+
 
 
 
@@ -61,4 +76,5 @@ https://docs.google.com/presentation/d/1SMZFTYyJuKsNJ37aSa3UvMXxPtapxYtl2Gf5AfCq
 
 
 # figma 
-https://www.figma.com/proto/CA9CsbZueQRGMre8iXCrpQ/CMI-Mood-Board?node-id=0-1&t=OfpAhODy7EYsrzQs-1
+
+[127.0.0.1 - - \[13/Aug/2026 09:51:29\] "GET /static/css/main.css HTTP/1.1" 304 -](https://www.figma.com/proto/CA9CsbZueQRGMre8iXCrpQ/CMI-Mood-Board?node-id=2014-2137&p=f&t=O0bQzoSfekQXj60v-1&scaling=contain&content-scaling=fixed&page-id=0%3A1)

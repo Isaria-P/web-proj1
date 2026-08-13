@@ -1,39 +1,41 @@
 {% extends "base.jinja" %}
 {% block title %}Create a New Cam Post{% endblock %}
 {% block main %}
-    <form action="{{ url_for('cam.create') }}" method="POST">
+    <h2>Create a New Cam Post</h2>
+    <form action="{{ url_for('cams.create') }}" method="POST" enctype="multipart/form-data" wtx-context="...">
+    
         <label>
             Title:
-            {% if form.errors.get("title") %}
-                <p class="error">{{ form.errors["title"] }}</p>
+            {% if form.field_errors.get("title") %}
+                <p class="error">{{ form.field_errors["title"] }}</p>
             {% endif %}
             <input type="text" name="title" value="{{ form.title }}" required>
         </label>
         <label>
             Content:
-            {% if form.errors.get("content") %}
-                <p class="error">{{ form.errors["content"] }}</p>
+            {% if form.field_errors.get("content") %}
+                <p class="error">{{ form.field_errors["content"] }}</p>
             {% endif %}
             <textarea name="content" required>{{ form.content }}</textarea>
         </label>
         <label>
             Image:
-            {% if form.errors.get("img") %}
-                <p class="error">{{ form.errors["img"] }}</p>
+            {% if form.field_errors.get("img") %}
+                <p class="error">{{ form.field_errors["img"] }}</p>
             {% endif %}
-            <input type="file" name="img" accept="image/*" value="{{ form.img }}" required>
+            <input type="file" name="img" accept="image/*" required>
         </label>
         <fieldset>
             <legend>Category:</legend>
-            {% if form.errors.get("category") %}
-                <p class="error">{{ form.errors["category"] }}</p>
+            {% if form.field_errors.get("category") %}
+                <p class="error">{{ form.field_errors["category"] }}</p>
             {% endif %}
             <label>
                 <input
                     type="radio"
                     name="category"
                     value="35 mm"
-                    {% if form.category == "35mm"}
+                    {% if form.category == "35 mm" %}
                         checked
                     {% endif %}
                     required
@@ -45,7 +47,7 @@
                     type="radio"
                     name="category"
                     value="medium format"
-                    {% if form.category == "medium format"}
+                    {% if form.category == "medium format" %}
                         checked
                     {% endif %}
                     required
@@ -57,7 +59,7 @@
                     type="radio"
                     name="category"
                     value="large format"
-                    {% if form.category == "Large format"}
+                    {% if form.category == "large format" %}
                         checked
                     {% endif %}
                     required

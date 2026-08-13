@@ -10,45 +10,87 @@ class Cam:
     content: str
     img: str
     category: str
-    author: str
     created: datetime
 
-
 class CamModel(Model):
-    def insert(self, title: str, content: str, img: str, category: str, author: str) -> int:
+    def insert(
+            self, title: str, content: str, img: str, category: str, author_id: int
+        ) -> int:
         created = datetime.now()
         cursor = self.db.execute(
             """
-            INSERT INTO Cams (title, content, img, category, author, created)
+            INSERT INTO Cams (title, content, img, category, author_id, created) 
                 VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (title, content, img, category, author, created),
+            (title, content, img, category, author_id, created),
         )
         self.db.commit()
-
         cam_id = cursor.lastrowid
         if not cam_id:
             raise RuntimeError("insert failed: no lastrowid")
         return cam_id
 
     def get(self, cam_id: int) -> Cam:
-        cam_id, title, content, img, category, author, created = self.db.execute(
+        id, title, content, img, category, created = self.db.execute(
             """
-            SELECT id, title, content, img, category, author, created
+            SELECT id, title, content, img, category, created
             FROM Cams
             WHERE id = ?
             """,
-            (cam_id,),
+            (cam_id,)
         ).fetchone()
-        return Cam(cam_id, title, content, img, category, author, created)
+        return Cam(id, title, content, img, category, created )
+
+# newer
+    # get cam with author id
+    def get_with_author(self, cam_id: int):
+        row = self.db.execute(
+            """
+            SELECT 
+                c.id, 
+                c.title, 
+                c.content, 
+                c.img, 
+                c.category, 
+                c.author_id,
+                c.created,
+                a.email AS author
+            FROM Cams c
+            JOIN Accounts a ON c.author_id = a.id
+            WHERE c.id = ?
+            """,
+            (cam_id,)
+        ).fetchone()
+        if not row:
+            return None
+        return  {
+            "id": row[0],
+            "title": row[1],
+            "content": row[2],
+            "img": row[3],
+            "category": row[4],
+            "author_id": row[5],
+            "created": row[6],
+            "author": row[7],
+        }
+    
+    def account_cams(self, account_id: int) -> list[Cam]:
+        cams = self.db.execute(
+            """
+            SELECT Cams.id, title, content, img, category, created 
+            FROM Cams
+            WHERE author_id = ?
+            """,
+            (account_id,),
+        ).fetchall()
+        return [Cam(*c) for c in cams]
 
     def latest(self) -> list[Cam]:
         rows = self.db.execute(
             """
-            SELECT id, title, content, img, category, author, created
+            SELECT id, title, content, img, category, created
             FROM Cams
             ORDER BY created DESC
             """
         ).fetchall()
-        print(rows)
         return [Cam(*row) for row in rows]

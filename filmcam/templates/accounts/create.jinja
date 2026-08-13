@@ -1,0 +1,22 @@
+{% extends "base.jinja" %}
+{% block title %}Register a New Account{% endblock %}
+{% block main %}
+    <h2>Register a New Account</h2>
+    <form action="{{ url_for('accounts.create') }}" method="POST">
+        <label>
+            Email:
+            {% if form.field_errors.get("email") %}
+                <p class="error">{{ form.field_errors["email"] }}</p>
+            {% endif %}
+            <input type="email" name="email" value="{{ form.email }}" required>
+        </label>
+        <label>
+            Password:
+            {% if form.field_errors.get("password") %}
+                <p class="error">{{ form.field_errors["password"] }}</p>
+            {% endif %}
+            <input type="password" name="password" required>
+        </label>
+        <button>Submit</button>
+    </form>
+{% endblock %}

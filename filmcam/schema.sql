@@ -4,6 +4,12 @@ CREATE TABLE IF NOT EXISTS Cams (
     content TEXT NOT NULL,
     img VARCHAR(255),
     category TEXT NOT NULL,
-    author TEXT NOT NULL,
-    created DATETIME NOT NULL
+    author INTEGER NOT NULL REFERENCES Accounts(id),
+    created DATETIME NOT NULL 
+);
+
+CREATE TABLE IF NOT EXISTS Accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
 );

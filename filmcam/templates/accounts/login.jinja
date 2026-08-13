@@ -1,0 +1,25 @@
+{% extends "base.jinja" %}
+{% block title %}Login{% endblock %}
+{% block main %}
+    <h2>Login</h2>
+    <form action="{{ url_for('accounts.login') }}" method="POST">
+        {% for error in form.errors %}
+            <p class="error">{{ error }}</p>
+        {% endfor %}
+        <label>
+            Email:
+            {% if form.field_errors.get("email") %}
+                <p class="error">{{ form.errors["email"] }}</p>
+            {% endif %}
+            <input type="email" name="email" value="{{ form.email }}" required>
+        </label>
+        <label>
+            Password:
+            {% if form.field_errors.get("password") %}
+                <p class="error">{{ form.errors["password"] }}</p>
+            {% endif %}
+            <input type="password" name="password" required>
+        </label>
+        <button>Submit</button>
+    </form>
+{% endblock %}
