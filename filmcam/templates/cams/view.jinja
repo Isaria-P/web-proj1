@@ -4,8 +4,7 @@
 <div class="cam-container">
     <h2>{{ cam.title }}</h2>
     <div class="cam-meta">
-        <p>by <a href="{{ url_for('accounts.profile', account_id=cam.author_id) }}">
-            {{ cam.id }}</a>
+        <p>    {{ cam.id }}</a>
         </p>
         <h2>{{ cam.title }} alt="{{ cam.title }}"</h2>
         <img src="{{ cam.img }}">

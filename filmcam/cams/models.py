@@ -63,16 +63,9 @@ class CamModel(Model):
         ).fetchone()
         if not row:
             return None
-        return  {
-            "id": row[0],
-            "title": row[1],
-            "content": row[2],
-            "img": row[3],
-            "category": row[4],
-            "author_id": row[5],
-            "created": row[6],
-            "author": row[7],
-        }
+        print(row)
+        return dict(zip(("id", "title", "content", "img", "category", "author_id", "created", "email"), row))
+ 
     
     def account_cams(self, account_id: int) -> list[Cam]:
         cams = self.db.execute(
