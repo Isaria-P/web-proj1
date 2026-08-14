@@ -1,34 +1,35 @@
 {% extends "base.jinja" %}
 {% block title %}Home{% endblock %}
 {% block main %}
-    <h2>Latest Cams</h2>
+    <h2>Latest Cams Post</h2>
     {% if cams %}
-        <table>
-            <tr>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Image</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Created at</th>
-            </tr>
+        <div class="cam-grid">
             {% for cam in cams %}
-                <tr>
-                    <td>
-                        <a href="/cams/view/{{ cam.id }}">{{
-                            cam.title
-                        }}</a>
-                    </td>
-                    <td>{{ cam.content }}</td>
-                    <td>{{ cam.img }}</td>
-                    <td>{{ cam.category }}</td>
-                    <td>{{ cam.author }}</td>
-                    <td>#{{ cam.created }}</td>
-                    <td>#{{ cam.author_id }}</td>
-                </tr>
+                <div class="card">
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + cam.img) }}"
+                        alt="{{ cam.title }}"
+                    >
+                    <div class="container">
+                        <h3>
+                            <a href="{{ url_for('cams.view', cam_id=cam.id) }}">
+                                {{ cam.title }}
+                        </h3>
+                        <p>
+                            <strong>Category: </strong>
+                            {{ cam.catgory }}
+                        </p>
+                        <p>
+                            <small>
+                                created: {{ cam.created }}
+                            </small>
+                        </p>
+                    </div>
+                </div>
             {% endfor %}
-        </table>
+        </div>
     {% else %}
-        <p>There's nothing to see here... yet!</p>
+           
+    <p>no cams have been created... yet!</p>
     {% endif %}
 {% endblock %}

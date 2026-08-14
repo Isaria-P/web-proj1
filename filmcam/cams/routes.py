@@ -1,4 +1,4 @@
-from flask import  redirect, render_template, url_for, request, flash, session
+from flask import  redirect, render_template, url_for, request, flash, abort, current_app, session
 
 from filmcam.cams import blueprint, forms
 from filmcam.cams.forms import CamCreateForm
@@ -6,15 +6,34 @@ from filmcam.cams.models import CamModel
 from filmcam.utils import db
 from filmcam.utils.forms import Field
 
+import os 
+from werkzeug.utils import secure_filename
+
 @blueprint.get("/")
 def index():
-    """show only snippets created by the user who is currently logged in"""
-    account_cams = []
-    account_id = session.get("account_id")
-    if account_id is not None:
-        cams = CamModel(db.get_connection())
-        account_cams = cams.account_cams(account_id)
-    return render_template("/cams/index.jinja", cams=account_cams)
+    """Show all the cams in currently in the db."""
+    cams = CamModel(db.get_connection())
+    latest_cams = cams.latest()
+    
+    return render_template("/cams/index.jinja", cams=latest_cams)
+
+@blueprint.post('/')
+def upload_file():
+    img_file = request.files["img"]
+
+    if img_file.filename == "":
+        flash("Please select an image.")
+        return redirect(url_for('cam.index'))
+    
+    # filename = secure_filename(img_file.filename)
+
+    # upload_path = os.path.join(
+    #     current_app.config["UPLOAD_FOLDER"],
+    #     filename
+    # )
+    # img_file.save(upload_file)
+
+    return redirect(url_for("cams.index"))
 
 @blueprint.get("/create")
 def create():
@@ -32,16 +51,19 @@ def create_submit():
     if account_id is None:
         return redirect(url_for("accounts.login"))
 
+    # get data
     title = request.form["title"]
     content = request.form["content"]
-
     img = request.files["img"]
     category = request.form["category"]
-    
-    # store the values received from the client into the form object.
-    form = forms.CamCreateForm(title, content, img.filename, category)
 
-    # See the Form definition in "filmcam/utils/forms.py".
+    # upload  safe file
+    secure_img = secure_filename(img.filename)
+
+    # screate the form object
+    form = forms.CamCreateForm(title, content, secure_img, category)
+
+    # validate from the ".get("/create")"
     form.check_field(
         Field.not_blank(form.title), "title", "This field cannot be blank"
     )
@@ -63,14 +85,23 @@ def create_submit():
         "category",
         "This field must be 35mm, medium format or large format",
     )
+    # stop if validatefails
     if not form.is_valid:
         return render_template("cams/create.jinja", form=form), 422
+
+    # save the image to the server
+    upload_path = os.path.join(
+        current_app.config["UPLOAD_FOLDER"],
+        filename
+    )
+   
+    # update path
+    img.save(upload_path)
 
     cams = CamModel(db.get_connection())
     cams.insert(form.title, form.content, form.img, form.category, account_id) 
 
     flash("Cam Post was successfully created!")
-    
     return redirect(url_for("home"))
 
 @blueprint.get("/view/<int:cam_id>")
@@ -82,6 +113,18 @@ def view(cam_id):
         flash("Cam Post not found.")
         return redirect(url_for("cams.index"))
     return render_template("cams/view.jinja", cam=cam)
+
+@blueprint.get("/account/profile")
+def account_profile():
+    """Show only cams created by current user logged in."""
+    account_cams = []
+
+    account_id = session.get("account_id")
+
+    if account_id is not None:
+        cams = CamModel(db.get_connection())
+        account_cams = cams.account_cams(account_id)
+    cams = CamModel(db.get_connection())
 
         
 

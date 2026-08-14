@@ -144,11 +144,6 @@ header {
     text-align: center;
 }
 
-/* header a {
-    color: #34495e;
-    text-decoration: none;
-} */
-
 nav {
     border-bottom: 1px solid #e9e4bd;
     padding-top: 17px;
@@ -247,11 +242,6 @@ form button {
     margin-top: 2rem;
 }
 
-form input[type="text"], form input[type="password"], form input[type="email"] {
-    padding: 0.75em 18px;
-    width: 100%;
-}
-
 a.button, button {
     background-color: #e9e4bd;
     border-radius: 3px;
@@ -295,21 +285,6 @@ form button {
     margin-top: 2rem;
 }
 
-form input[type="text"], form input[type="password"], form input[type="email"] {
-    padding: 0.75em 18px;
-    width: 100%;
-}
-
-form input[type="text"],
-form input[type="password"],
-form input[type="email"],
-textarea {
-    color: #6a6c6f;
-    background: #ffffff;
-    border: 1px solid #e9e4bd;
-    border-radius: 3px;
-}
-
 .error {
 color: #c0392b;
     font-weight: bold;
@@ -336,8 +311,6 @@ textarea {
     border: 1px solid #e9e4bd;
     border-radius: 3px;
 }
-
-
 
 .cam pre {
     padding: 18px;
@@ -371,9 +344,9 @@ textarea {
 p.flash {
     color: #e9e4bd;
     font-weight: bold;
-    background-color: #9ea7c4;
+    background-color: #131313;
     padding: 18px;
-    margin-bottom: 36px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
@@ -386,24 +359,42 @@ div.error {
     text-align: center;
 }
 
-table {
-    background: #131313;
-    border: 1px solid #e9e4bd;
-    border-collapse: collapse;
+.cam-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: clamp(10px, 3vw, 40px);
+    gap: clamp(16px, 2vw, 24px);
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
     width: 100%;
+    height: clamp(180px, 25vw, 300px);
+    object-fit: cover;
 }
 
-th:last-child, td:last-child {
-    text-align: right;
-    color: #9ea7c4;
+.card .container {
+    padding: 16px;
 }
 
-tr {
-    border-bottom: 1px solid #e9e4bd;
+.card h3 {
+    margin-top: 0;
 }
 
-tr:nth-child(2n) {
-    background-color: #f7f9fa;
+.card h3 a {
+    text-decoration: none;
+    color: black;
+}
+
+.card h3 a:hover {
+    text-decoration: underline;
 }
 
 footer {
@@ -414,4 +405,16 @@ footer {
     height: 50px;
     color: #6a6c6f;
     text-align: center;
+}
+
+@media (max-width: 900px) {
+    .cam-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cam-grid {
+        grid-template-columns: 1fr;
+    }
 }

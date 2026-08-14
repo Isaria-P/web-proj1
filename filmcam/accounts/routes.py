@@ -58,7 +58,6 @@ def login():
 def login_submit(): 
     email = request.form["email"]
     password = request.form["password"]
-
     form = forms.LoginForm(email, password)
     accounts = AccountModel(db.get_connection())
 

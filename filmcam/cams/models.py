@@ -47,7 +47,7 @@ class CamModel(Model):
         row = self.db.execute(
             """
             SELECT 
-                c.id, 
+                c.id,
                 c.title, 
                 c.content, 
                 c.img, 
@@ -64,7 +64,7 @@ class CamModel(Model):
         if not row:
             return None
         print(row)
-        return dict(zip(("id", "title", "content", "img", "category", "author_id", "created", "email"), row))
+        return dict(zip(("id", "title", "content", "img", "category", "author_id", "created", "author"), row))
  
     
     def account_cams(self, account_id: int) -> list[Cam]:
