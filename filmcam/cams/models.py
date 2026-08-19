@@ -19,7 +19,7 @@ class CamModel(Model):
         created = datetime.now()
         cursor = self.db.execute(
             """
-            INSERT INTO Cams (title, content, img, category, author_id, created) 
+            INSERT INTO Cams (title, content, img, category, author, created) 
                 VALUES (?, ?, ?, ?, ?, ?)
             """,
             (title, content, img, category, author_id, created),
@@ -52,11 +52,11 @@ class CamModel(Model):
                 c.content, 
                 c.img, 
                 c.category, 
-                c.author_id,
+                c.author,
                 c.created,
                 a.email AS author
             FROM Cams c
-            JOIN Accounts a ON c.author_id = a.id
+            JOIN Accounts a ON c.author = a.id
             WHERE c.id = ?
             """,
             (cam_id,)
@@ -72,7 +72,7 @@ class CamModel(Model):
             """
             SELECT Cams.id, title, content, img, category, created 
             FROM Cams
-            WHERE author_id = ?
+            WHERE author = ?
             """,
             (account_id,),
         ).fetchall()

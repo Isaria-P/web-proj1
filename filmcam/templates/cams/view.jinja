@@ -1,16 +1,25 @@
 {% extends "base.jinja" %}
 {% block title %}{{ cam.title }}{% endblock %}
 {% block main %}
-<div class="cam-container">
-    <h2>{{ cam.title }}</h2>
-    <div class="cam-meta">
-        <p>    {{ cam.id }}</a>
-        </p>
-        <h2>{{ cam.title }} alt="{{ cam.title }}"</h2>
-        <img src="{{ cam.img }}">
-        <p>{{ cam.content }}</p>
-        <p>Category:{{ cam.category }}</p>
-        <p>Created{{ cam.created }}</p>
+<div class="view-container">
+    <!-- <h3>{{ cam.title }}</h3> -->
+    
+    <!-- <hr> -->
+    <div class="view-image">
+        <!-- <p>{{ cam.id }}</a></p> -->
+        <img 
+            src="{{ url_for('static', filename='uploads/' + cam.img) }}" 
+            alt="{{ cam.title }}">
+        <br>
     </div>
+    <div class="view-text">     
+        <!-- <p>Image path: {{ cam.img }} : src="{{ cam.upload_file }}</p> -->
+        <h2 alt="{{ cam.title }}">{{ cam.title }} </h2>  
+
+        
+        <p alt="{{ cam.category }}">Category: {{ cam.category }}</p>
+        <p alt="{{ cam.content }}">{{ cam.content }}</p>
+        <p>Created: {{ cam.created }}</p>
+    </div> 
 </div>
 {% endblock %}

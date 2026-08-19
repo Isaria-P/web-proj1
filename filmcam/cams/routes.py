@@ -46,6 +46,7 @@ def create():
 @blueprint.post("/create")
 def create_submit():
     """Handle cam creation from submission."""
+    
     account_id = session.get("account_id")
     
     if account_id is None:
@@ -57,8 +58,8 @@ def create_submit():
     img = request.files["img"]
     category = request.form["category"]
 
-    # upload  safe file
-    secure_img = secure_filename(img.filename)
+    # make file safe 
+    secure_img = secure_filename(img.filename)    
 
     # screate the form object
     form = forms.CamCreateForm(title, content, secure_img, category)
@@ -89,17 +90,26 @@ def create_submit():
     if not form.is_valid:
         return render_template("cams/create.jinja", form=form), 422
 
-    # save the image to the server
+    #  save Image
+    #---------------------------
+    # where image is stored  
     upload_path = os.path.join(
         current_app.config["UPLOAD_FOLDER"],
-        filename
+        secure_img
     )
-   
+    # url_path = upload_path.replace("\\", "/")
+
     # update path
     img.save(upload_path)
 
+    # path that can be stored in db => uploads/OlympusOM-1OM-1n.jpg
+    img_path = f"uploads/{secure_img}"
+
     cams = CamModel(db.get_connection())
-    cams.insert(form.title, form.content, form.img, form.category, account_id) 
+    cams.insert(form.title, form.content, img_path, form.category, account_id) 
+
+    # print("UPLOAD FOLDER:", current_app.config["UPLOAD_FOLDER"])
+    # print("FOLDER EXISTS:", os.path.exists(current_app.config["UPLOAD_FOLDER"]))
 
     flash("Cam Post was successfully created!")
     return redirect(url_for("home"))

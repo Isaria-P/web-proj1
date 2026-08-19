@@ -1,6 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, session
 
-
 from filmcam.accounts import blueprint, forms
 from filmcam.accounts.models import AccountModel, InvalidCredentialsError
 from filmcam.utils.forms import Field
@@ -69,8 +68,8 @@ def login_submit():
     
     session["account_id"] = account.id
     # testing below 
-    print("SESSION AFTER LOGIN:", session)
-    print("ACCOUNT ID:", account.id)
+    # print("SESSION AFTER LOGIN:", session)
+    # print("ACCOUNT ID:", account.id)
     
     flash("You've successfully logged in!")
     return redirect(url_for("home"))
