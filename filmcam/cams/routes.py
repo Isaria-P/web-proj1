@@ -58,6 +58,8 @@ def create_submit():
     img = request.files["img"]
     category = request.form["category"]
 
+    print("CATEGORY FROM FORM:", category)
+    
     # make file safe 
     secure_img = secure_filename(img.filename)    
 

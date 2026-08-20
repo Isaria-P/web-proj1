@@ -293,8 +293,8 @@ div.error {
 }
 
 .card img {
-    width: 100%;
-    height: clamp(300px, 25vw, 400px);
+    /* width: 100%; */
+    height: clamp(300px, 350px, 400px);
     object-fit: cover;
 }
 
@@ -343,8 +343,9 @@ div.error {
     /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
 }
 
-.view-image{
+.view-image img{
     width: auto;
+    max-width: 100%;
     height: auto;
     display: block;
     object-fit: cover;

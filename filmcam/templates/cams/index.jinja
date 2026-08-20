@@ -15,8 +15,12 @@
                             <a href="{{ url_for('cams.view', cam_id=cam.id) }}">
                                 {{ cam.title }}
                         </h3>
-                        <p>
+                        <p>Account ID: {{ session.get("account_id") }}</p>
+                        <p  alt="{{ cam.category }}">
                             Category: {{ cam.catgory }}
+                        </p>
+                        <p alt="{{ cam.content }}">
+                            {{ cam.content }}
                         </p>
                         <p>
                             <small>
