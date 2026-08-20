@@ -3,6 +3,8 @@ from flask import  redirect, render_template, url_for, request, flash, abort, cu
 from filmcam.cams import blueprint, forms
 from filmcam.cams.forms import CamCreateForm
 from filmcam.cams.models import CamModel
+from filmcam.accounts.models import AccountModel
+
 from filmcam.utils import db
 from filmcam.utils.forms import Field
 
@@ -12,10 +14,20 @@ from werkzeug.utils import secure_filename
 @blueprint.get("/")
 def index():
     """Show all the cams in currently in the db."""
-    cams = CamModel(db.get_connection())
-    latest_cams = cams.latest()
+    conn = db.get_connection()
+    cams_model = CamModel(conn)
+    accounts_model = AccountModel(conn)
+
+    # Get all stories, newest first
+    all_cams = cams_model.latest()
+
+
+    # Attach author usernames for display
+    for cam in all_cams:
+        author = accounts_model.get(cam.author_id)
+        cam.author_username = author.username
     
-    return render_template("/cams/index.jinja", cams=latest_cams)
+    return render_template("/cams/index.jinja", cams=all_cams)
 
 @blueprint.post('/')
 def upload_file():
@@ -25,13 +37,6 @@ def upload_file():
         flash("Please select an image.")
         return redirect(url_for('cam.index'))
     
-    # filename = secure_filename(img_file.filename)
-
-    # upload_path = os.path.join(
-    #     current_app.config["UPLOAD_FOLDER"],
-    #     filename
-    # )
-    # img_file.save(upload_file)
 
     return redirect(url_for("cams.index"))
 
@@ -39,7 +44,9 @@ def upload_file():
 def create():
     """Users who are not logged in can not be able to create a cam"""
     if session.get("account_id") is None:
+        flash("You must be logged in to create a cam post.")
         return redirect(url_for("accounts.login"))
+
     form = forms.CamCreateForm()
     return render_template("/cams/create.jinja", form=form)
 
@@ -50,9 +57,11 @@ def create_submit():
     account_id = session.get("account_id")
     
     if account_id is None:
+        flash("You must be logged in to create a cam.")
         return redirect(url_for("accounts.login"))
 
     # get data
+    
     title = request.form["title"]
     content = request.form["content"]
     img = request.files["img"]
@@ -105,16 +114,18 @@ def create_submit():
     # path that can be stored in db => uploads/OlympusOM-1OM-1n.jpg
     img_path = f"uploads/{secure_img}"
 
+    # insert cam
     cams = CamModel(db.get_connection())
+    print("IMAGE FROM DATABASE:-----", cams.img)
     cams.insert(form.title, form.content, img_path, form.category, account_id) 
 
     # print("UPLOAD FOLDER:", current_app.config["UPLOAD_FOLDER"])
-    # print("FOLDER EXISTS:", os.path.exists(current_app.config["UPLOAD_FOLDER"]))
+    print("FOLDER EXISTS:", os.path.exists(current_app.config["UPLOAD_FOLDER"]))
 
     flash("Cam Post was successfully created!")
     return redirect(url_for("home"))
 
-@blueprint.get("/view/<int:cam_id>")
+@blueprint.route("/view/<int:cam_id>", methods=["GET", "POST"])
 def view(cam_id):
     """Show a cam with title, content, img, category."""
     cams = CamModel(db.get_connection())
@@ -122,7 +133,26 @@ def view(cam_id):
     if cam is None:
         flash("Cam Post not found.")
         return redirect(url_for("cams.index"))
-    return render_template("cams/view.jinja", cam=cam)
+
+    comments = coms.get_comments_with_authors(cam_id)
+
+    # handle comment submission
+    if request.method == "POST":
+        if session.get("account_id") is None:
+            flash("You must be logged in to comment")
+            return redirect(url_for("accounts.login"))
+        
+        body = request.form.get("body", "").strip()
+        if not body:
+            flash("Comment cannot be blank.")
+        elif len(body) > 10000:
+            flash("Comment cannot exceed 10,000 characters.")
+        else:
+            cams.add_comment(cam_id, session["account_id"], body)
+            flash("Comment added successfully!!!")
+            return redirect(url_for("cams.view", cam_id=cam_id))
+
+    return render_template("cams/view.jinja", cam=cam, comments=comments)
 
 @blueprint.get("/account/profile")
 def account_profile():

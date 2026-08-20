@@ -5,7 +5,7 @@ from flask import current_app
 
 from filmcam.utils.db import get_connection
 
-@click.command 
+@click.command() 
 def init() -> None:
     """Initialize the app (create database, etc.)"""
 

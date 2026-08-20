@@ -11,6 +11,18 @@ class Cam:
     img: str
     category: str
     created: datetime
+    author_id: int
+    author_username: str | None = None
+
+@dataclass
+class Comment:
+    id: int
+    body: str
+    created: str
+    author_id: int
+    cam_id: int
+    author_username: str | None = None
+
 
 class CamModel(Model):
     def insert(
@@ -41,7 +53,7 @@ class CamModel(Model):
         ).fetchone()
         return Cam(id, title, content, img, category, created )
 
-# newer
+    # newer
     # get cam with author id
     def get_with_author(self, cam_id: int):
         row = self.db.execute(
@@ -56,7 +68,7 @@ class CamModel(Model):
                 c.created,
                 a.email AS author
             FROM Cams c
-            JOIN Accounts a ON c.author = a.id
+            JOIN Accounts a ON c.author_id = a.id
             WHERE c.id = ?
             """,
             (cam_id,)
@@ -70,8 +82,9 @@ class CamModel(Model):
     def account_cams(self, account_id: int) -> list[Cam]:
         cams = self.db.execute(
             """
-            SELECT Cams.id, title, content, img, category, created 
-            FROM Cams
+            SELECT c.id, c.title, c.content, c.img, c.category, c.created, c.author
+
+            FROM Cams c
             WHERE author = ?
             """,
             (account_id,),
@@ -81,9 +94,86 @@ class CamModel(Model):
     def latest(self) -> list[Cam]:
         rows = self.db.execute(
             """
-            SELECT id, title, content, img, category, created
+            SELECT id, title, content, img, category, created, author
             FROM Cams
             ORDER BY created DESC
             """
         ).fetchall()
         return [Cam(*row) for row in rows]
+
+    # get comments w/ author username
+    def get_comments_with_authors(self, cam_id: int):
+        rows = self.db.execute(
+            """
+                SELECT c.id, c.body, c.created, c.author_id, c.story_id, a.username
+                FROM Comments c
+                JOIN Accounts a ON c.author_id = a.id
+                WHERE c.cam_id
+                ORDER BY c.created ASC
+            """,
+            (cam_id,)
+        ).fetchall()
+        comment = []
+        for row in rows:
+            comments.append({
+                "id": row[0],
+                "body": row[1],
+                "created": row[2],
+                "author_id": row[3],
+                "story_id": row[4],
+                "author_username": row[5],
+            })
+        return comments
+
+    #add comment
+    def add_comment(self, cam_id: int, author_id: int, body: str) -> int:
+        created = datetime.utcnow()
+        cursor = self.db.execute(
+            """
+            INSERT INTO Comments (body, cam_id, author_id, created)
+            VALUES (?, ?, ?, ?)
+            """,
+            (body, cam_id, author_id, created)
+        )
+        self.db.commit()
+        return cursor.lastrowid
+
+class CommentModel(Model):
+    def insert(self, body: str, cam_id: int, author_id: int) -> int:
+        """Insert a new comment and return its ID."""
+        create = datetime.utcnow()
+        cursor = self.db.execute(
+                """
+                INSERT INTO Comments (body, cam_id, author_id, created)
+                VALUES (?, ?, ?, ?)
+                """,
+                (body, cam_id, author_id, created)
+            )
+        self.db.commit()
+        return cursor.lastrowid
+    
+    def for_cam(self, cam_id: int) -> list[Comment]:
+        """Return all comments for a specific cam, oldest first."""
+        rows = self.db.execute(
+            """
+            SELECT id, body, created, author_id, cam_id
+            FROM Comments
+            WHERE cam_id = ?
+            ORDER BY created ASC
+            """,
+            (cam_id,)
+        ).fetchall()
+        return [Comment(*row) for row in rows]
+
+    def account_comments(self, account_id: int) -> list[Comment]:
+        """Return all comments by a specific account."""
+        rows = self.db.execute(
+            """
+            SELECT id, body, created, author_id, cam_id
+            FROM Comments
+            WHERE author_id = ?
+            ORDER BY created DESC
+            """,
+            (account_id,)
+        ).fetchall()
+        return [Comment(*row) for row in rows]
