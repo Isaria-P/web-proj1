@@ -102,6 +102,7 @@ def login_submit():
         form.add_non_field_error("Email or password is incorrect")
         return render_template("accounts/login.jinja", form=form)
     
+
     session["account_id"] = account.id
     flash("You've successfully logged in!")
     return redirect(url_for("home"))
@@ -116,11 +117,25 @@ def logout():
 @blueprint.get("/profile/<int:account_id>")
 def profile(account_id):
     """Show a user's profile with their cams and comments."""
-    accounts = AccountModel(db.get_connection())
-    try:
-        account = accounts.get(account_id)
-    except Exception:
-        flash("Account not found.")
-        return redirect(url_for("home"))
+    account_id = session.get("account_id")
+
+    if account_id is None:
+        flash("You must be logged in to view yor profile.")
+        return redirect(url_for("account.login"))
+
+    account = AccountModel(db.get_connection()).get(account_id)
 
     return render_template("accounts/profile.jinja", account=account)
+
+@blueprint.get("/account/profile")
+def account_profile():
+    """Show only cams created by current user logged in."""
+    account_cams = []
+
+    account_id = session.get("account_id")
+
+    if account_id is not None:
+        cams = CamModel(db.get_connection())
+        account_cams = cams.account_cams(account_id)
+    cams = CamModel(db.get_connection())
+

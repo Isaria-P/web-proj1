@@ -3,30 +3,32 @@
 {% block main %}
     <h2>Latest Cams Post</h2>
     {% if cams %}
-        <div class="cam-grid">
-            {% for cam in cams %}
-                <div class="card">
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + cam.img) }}"
-                        alt="{{ cam.title }}"
-                    >
-                    <div class="container">
-                        <h3>
+        <div class="card-grid">
+            <div class="card">
+                {% for cam in cams %}
+                    <div class="card-img">
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + cam.img) }}"
+                            alt="{{ cam.title }}"
+                        >
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">
                             <a href="{{ url_for('cams.view', cam_id=cam.id) }}">
                                 {{ cam.title }}
                         </h3>
-                        <P>{{ cam.author_userusername }}</P>
-                        <p>
-                            Category: {{ cam.catgory }}
+                        <P class="card-author">Author: {{ cam.author_username }}</P>
+                        <p class="card-category">
+                            Category: {{ cam.category }}
                         </p>
-                        <p>
-                            <small>
-                                created: {{ cam.created }}
-                            </small>
+                        <p class="card-date">
+                            Created at: {{ cam.created }}
                         </p>
                     </div>
-                </div>
-            {% endfor %}
+                    
+                    
+                {% endfor %}
+            </div>
         </div>
     {% else %}
            

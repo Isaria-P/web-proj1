@@ -68,7 +68,7 @@ class CamModel(Model):
                 c.created,
                 a.email AS author
             FROM Cams c
-            JOIN Accounts a ON c.author_id = a.id
+            JOIN Accounts a ON c.author = a.id
             WHERE c.id = ?
             """,
             (cam_id,)
@@ -94,7 +94,7 @@ class CamModel(Model):
     def latest(self) -> list[Cam]:
         rows = self.db.execute(
             """
-            SELECT id, title, content, img, category, created, author
+            SELECT id, title, content, img, category, created, author AS author_id
             FROM Cams
             ORDER BY created DESC
             """
@@ -105,22 +105,22 @@ class CamModel(Model):
     def get_comments_with_authors(self, cam_id: int):
         rows = self.db.execute(
             """
-                SELECT c.id, c.body, c.created, c.author_id, c.story_id, a.username
+                SELECT c.id, c.body, c.created, c.author_id, c.cam_id, a.username
                 FROM Comments c
                 JOIN Accounts a ON c.author_id = a.id
-                WHERE c.cam_id
+                WHERE c.cam_id = ?
                 ORDER BY c.created ASC
             """,
             (cam_id,)
         ).fetchall()
-        comment = []
+        comments = []
         for row in rows:
             comments.append({
                 "id": row[0],
                 "body": row[1],
                 "created": row[2],
                 "author_id": row[3],
-                "story_id": row[4],
+                "cam_id": row[4],
                 "author_username": row[5],
             })
         return comments
@@ -137,6 +137,30 @@ class CamModel(Model):
         )
         self.db.commit()
         return cursor.lastrowid
+
+    def update(self, cam_id: int, title: str, content: str, category: str, img: str) -> None:
+        self.db.execute(
+            """
+            UPDATE Cams
+            SET title = ?,
+                content = ?,
+                category = ?,
+                img = ?
+            WHERE id = ?
+            """,
+            (title, content, category, img, cam_id)
+        )
+        self.db.commit()
+
+    def delete(self, cam_id: int) -> None:
+        self.db.execute(
+            """
+            DELETE FROM Cams
+            WHERE id =?
+            """,
+            (cam_id,)
+        )
+        self.db.commit()
 
 class CommentModel(Model):
     def insert(self, body: str, cam_id: int, author_id: int) -> int:

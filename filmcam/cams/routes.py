@@ -37,7 +37,6 @@ def upload_file():
         flash("Please select an image.")
         return redirect(url_for('cam.index'))
     
-
     return redirect(url_for("cams.index"))
 
 @blueprint.get("/create")
@@ -112,11 +111,12 @@ def create_submit():
     img.save(upload_path)
 
     # path that can be stored in db => uploads/OlympusOM-1OM-1n.jpg
-    img_path = f"uploads/{secure_img}"
+    img_path = secure_img
 
     # insert cam
     cams = CamModel(db.get_connection())
-    print("IMAGE FROM DATABASE:-----", cams.img)
+    print("IMAGE FROM DATABASE:-----", img_path)
+
     cams.insert(form.title, form.content, img_path, form.category, account_id) 
 
     # print("UPLOAD FOLDER:", current_app.config["UPLOAD_FOLDER"])
@@ -134,7 +134,7 @@ def view(cam_id):
         flash("Cam Post not found.")
         return redirect(url_for("cams.index"))
 
-    comments = coms.get_comments_with_authors(cam_id)
+    comments = cams.get_comments_with_authors(cam_id)
 
     # handle comment submission
     if request.method == "POST":
@@ -154,18 +154,96 @@ def view(cam_id):
 
     return render_template("cams/view.jinja", cam=cam, comments=comments)
 
-@blueprint.get("/account/profile")
-def account_profile():
-    """Show only cams created by current user logged in."""
-    account_cams = []
+@blueprint.get("/edit/<int:cam_id>")
+def edit(cam_id):
 
     account_id = session.get("account_id")
-
-    if account_id is not None:
-        cams = CamModel(db.get_connection())
-        account_cams = cams.account_cams(account_id)
+    if account_id is None:
+        flash("You must be logged in to edit a cam post.")
+        return redirect(url_for("accounts.login"))
     cams = CamModel(db.get_connection())
+    cam = cams.get_with_author(cam_id)
 
+    return render_template("cams/edit.jinja", cam=cam)
+
+@blueprint.post("/edit/<int:cam_id>")
+def edit_submit(cam_id):
+    # check login
+    account_id = session.get("account_id")
+
+    if account_id is None:
+        flash("You must be logged in to create a cam post.")
+        return redirect(url_for("accounts.login"))
+
+    # get cam db connection
+    cams = CamModel(db.get_connection())
+    cam = cams.get_with_author(cam_id)
+
+    # conditional does cam exist?
+    if cam is None:
+        abort(404)
+
+    # condition check if logged-in user owns the cam
+    if cam["author_id"] != account_id:
+        abort(403)
         
+    # get form data
+    title = request.form["title"]
+    content = request.form["content"]
+    category = request.form["category"]
+
+    # get image
+    img = request.files.get("img")  
+
+    # orgignal img
+    img_path = cam["img"]
+
+    # conditional if an img gets selected
+    if img and img.filename:
+
+        secure_img = secure_filename(img.filename)
+
+        upload_path = os.path.join(
+            current_app.config["UPLOAD_FOLDER"],
+            secure_img
+        )
+
+        img.save(upload_path)
+        img_path = secure_img
+    else:
+        img_path = cam["img"]
+    
+    # update db
+    cams.update(cam_id, title, content, category, img_path)
+
+    flash("Cam post updated successfully!!!")
+
+    return redirect(url_for("cams.view", cam_id=cam_id))
+
+
+@blueprint.post("/delete/<int:cam_id>")
+def delete(cam_id):
+    account_id = session.get("account_id")
+    
+    if  account_id is None:
+        flash("You must be looged in to delete a cam post.")
+        return redirect(render_template(""))
+
+    cams = CamModel(db.get_connection())
+    cam = cams.get(cam_id)
+
+    if session.get("cam") is None:
+        flash("Create a cam post to view all your cam post.")
+        return redirect(url_for(cam.create))
+
+    # check account_id and author id
+    if cam.author_id != account_id:
+        flash("Create a cam post to view all your cam post.")
+        return redirect(url_for(cam.create))
+
+    cams.delete(cam_id)
+    flash("Cam post deleted successfully!")
+
+    return render_template("cams/view.jinja")
 
 
