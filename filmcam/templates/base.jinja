@@ -23,7 +23,7 @@
             {% for message in get_flashed_messages() %}
                 <p class="flash">{{ message }}</p>
             {% endfor %}
-            <p>Account ID: {{ session.get("account_id") }}</p>
+            <!-- <p>Account ID: {{ session.get("account_id") }}</p> -->
             {% block main %}{% endblock %}
         </main>
         <footer>

@@ -36,7 +36,6 @@ def upload_file():
     if img_file.filename == "":
         flash("Please select an image.")
         return redirect(url_for('cam.index'))
-    
     return redirect(url_for("cams.index"))
 
 @blueprint.get("/create")
@@ -45,22 +44,18 @@ def create():
     if session.get("account_id") is None:
         flash("You must be logged in to create a cam post.")
         return redirect(url_for("accounts.login"))
-
     form = forms.CamCreateForm()
     return render_template("/cams/create.jinja", form=form)
 
 @blueprint.post("/create")
 def create_submit():
     """Handle cam creation from submission."""
-    
     account_id = session.get("account_id")
-    
     if account_id is None:
         flash("You must be logged in to create a cam.")
         return redirect(url_for("accounts.login"))
 
     # get data
-    
     title = request.form["title"]
     content = request.form["content"]
     img = request.files["img"]
@@ -97,7 +92,6 @@ def create_submit():
     # stop if validatefails
     if not form.is_valid:
         return render_template("cams/create.jinja", form=form), 422
-
     #  save Image
     #---------------------------
     # where image is stored  

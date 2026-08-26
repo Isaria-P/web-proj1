@@ -1,6 +1,7 @@
 {% extends "base.jinja" %}
 {% block title %}{{ cam.title }}{% endblock %}
 {% block main %}
+
 <div class="view-grid">
     <!-- <h3>{{ cam.title }}</h3> -->
     
@@ -16,13 +17,22 @@
             </div>
             <div class="card-content">     
                 <!-- <p>Image path: {{ cam.img }} : src="{{ cam.upload_file }}</p> -->
-                <h2 class="card-title">{{ cam.title }} </h2>  
+                <h2 class="card-title">{{ cam.title }} // view.jinja</h2>  
                 <p alt="{{ cam.category }}">Category: {{ cam.category }}</p>
                 <p alt="{{ cam.content }}">{{ cam.content }}</p>
                 <p>Created: {{ cam.created }}</p>
+                <p>yaaaaa</p>
             </div> 
         </div>
     </div>
     <hr>
+</div>
+
+<div class="view-grid">
+<!-- Comment section -->
+    <h2>Comments</h2>
+    {% if sessions.get("account_id") %}
+        <div class=""></div>
+
 </div>
 {% endblock %}

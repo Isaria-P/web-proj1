@@ -2,7 +2,7 @@
 {% block title %}{{ account.username }}{% endblock %}
 {% block main %}
 
-<h2> Hi{{ account.username }}, look at your past post and comments below</h2>
+<p> Hi{{ account.username }}, look at your past post and comments below</p>
 <div class ="cam-grid">
     <h3>My CamPost</h3>
     {% if account.cams %}
@@ -36,9 +36,9 @@
     {% endif %}
     <br>
     </div>
-
+    <!-- comment section below -->
     <br>
-    <h3>Comments</h3>
+    <h3>Comments </h3>
     {% if account.comments %}
         <ul>
             {% for comment in account.comments %}
