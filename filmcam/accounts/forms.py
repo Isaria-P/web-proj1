@@ -11,5 +11,6 @@ class LoginForm(Form):
 
 @dataclass
 class AccountCreateForm(Form):
+    username: str = ""
     email: str = ""
     password: str = ""

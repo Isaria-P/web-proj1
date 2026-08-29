@@ -13,36 +13,71 @@ def create():
 
 @blueprint.post("/create")
 def create_submit():
-    email = request.form["email"]
-    password = request.form["password"]
-    form = forms.AccountCreateForm(email=email, password=password)
+    username = request.form.get("username", "").strip()
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+
+    form = forms.AccountCreateForm(username=username, email=email, password=password)
     accounts = AccountModel(db.get_connection())
 
+
+    # username validation
     form.check_field(
-        Field.not_blank(form.email), "email", "This field cannot be blank"
+        Field.not_blank(username), "username", "This field cannot be blank"
+        )
+    form.check_field(
+        Field.max_chars(username, 50), "username", "Username cannot exceed 50 characters"
+        )
+    form.check_field(
+        " " not in username, "username", "Username cannot contain whitespace"
+        )
+    form.check_field(
+        not accounts.username_exists(username), "username", "Username already exists"
+        )
+
+    # Email validation
+    form.check_field(
+        Field.not_blank(email), "email", "This field cannot be blank"
     )
     form.check_field(
-        Field.is_valid_email(form.email), "email", "This is not a valid email"
+        Field.is_valid_email(email), "email", "This is not a valid email"
     )
     form.check_field(
-        not accounts.email_exists(form.email),
+        not accounts.email_exists(email),
         "email",
         "This email already exists",
     )
+
+    # Password validation
     form.check_field(
-        Field.not_blank(form.password), "password", "This field cannot be blank"
+        Field.not_blank(password), "password", "This field cannot be blank"
     )
     form.check_field(
-        Field.min_chars(form.password, 8),
+        Field.min_chars(password, 8),
         "password",
         "This field cannot be less than 8 characters long",
     )
+    form.check_field(
+        Field.max_chars(password, 20),
+        "password",
+        "Password cannot exceed 20 characters"
+        )
+    form.check_field(
+        any(c.isupper() for c in password), 
+        "password", 
+        "Password must contain at least one uppercase letter"
+        )
+    form.check_field(
+        any(c.isdigit() for c in password), 
+        "password", 
+        "Password must contain at least one digit"
+        )
 
     if not form.is_valid:
         return render_template("accounts/create.jinja", form=form), 422
 
     accounts = AccountModel(db.get_connection())
-    accounts.insert(form.email, form.password)
+    accounts.insert(username, email, password)
 
     flash("Account successfully created!")
 
@@ -55,9 +90,10 @@ def login():
 
 @blueprint.post("/login")
 def login_submit(): 
-    email = request.form["email"]
-    password = request.form["password"]
-    form = forms.LoginForm(email, password)
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+
+    form = forms.LoginForm(email=email, password=password)
     accounts = AccountModel(db.get_connection())
 
     try:
@@ -66,11 +102,8 @@ def login_submit():
         form.add_non_field_error("Email or password is incorrect")
         return render_template("accounts/login.jinja", form=form)
     
+
     session["account_id"] = account.id
-    # testing below 
-    # print("SESSION AFTER LOGIN:", session)
-    # print("ACCOUNT ID:", account.id)
-    
     flash("You've successfully logged in!")
     return redirect(url_for("home"))
 
@@ -80,3 +113,29 @@ def logout():
     session.pop("account_id", None)
     flash("You've successfully logged out!")
     return redirect(url_for("home"))
+
+@blueprint.get("/profile/<int:account_id>")
+def profile(account_id):
+    """Show a user's profile with their cams and comments."""
+    account_id = session.get("account_id")
+
+    if account_id is None:
+        flash("You must be logged in to view yor profile.")
+        return redirect(url_for("account.login"))
+
+    account = AccountModel(db.get_connection()).get(account_id)
+
+    return render_template("accounts/profile.jinja", account=account)
+
+@blueprint.get("/account/profile")
+def account_profile():
+    """Show only cams created by current user logged in."""
+    account_cams = []
+
+    account_id = session.get("account_id")
+
+    if account_id is not None:
+        cams = CamModel(db.get_connection())
+        account_cams = cams.account_cams(account_id)
+    cams = CamModel(db.get_connection())
+

@@ -1,0 +1,57 @@
+{% extends "base.jinja" %}
+{% block title %}{{ category }}{% endblock %}
+{% block main %}
+<article class="category">
+    <div class="category-nav">
+        <a href="{{ url_for('cams.index') }}"> All Cam Post</a>
+        <a href="{{url_for('cams.category', category='35 mm')}}">
+            35 mm
+        </a>
+        <a href="{{url_for('cams.category', category='medium format')}}">
+            Medium Format
+        </a>
+        <a href="{{url_for('cams.category', category='large format')}}">
+            Larget Format
+        </a>
+    </div>
+    <h2>Category: {{category}} </h2>
+    {% if cams %}
+        <div class="card-grid">
+            {% for cam in cams %}
+                <div class="card">
+                    <div class="card-img">
+                        <img
+                        src="{{ url_for( 
+                            'static', filename='uploads/' + cam.img
+                        ) }}"
+                    >
+                    </div>
+            
+                    <div class="card-content">
+                        <h3 class="card-title">
+                            <a href="{{ url_for('cams.view', cam_id=cam.id) }}">{{ cam.title }}</a>
+                        </h3>
+                        <p class="card-category">Category: 
+                            <a href="{{  url_for('cams.category', category=cam.category) }}">
+                                {{ cam.category }}
+                            </a>
+                        </p>
+                        <p class="card-date">
+                        Created at: {{ cam.created }}
+                    </p>
+                    </div>
+                </div>
+            {% endfor %}
+                
+        </div>
+        {% else %}
+            <p>
+                There are no cameras in this category yet.
+            </p>
+    {% endif %}
+
+</article>
+
+
+
+{% endblock %}

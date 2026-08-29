@@ -1,0 +1,60 @@
+{% extends "base.jinja" %}
+{% block title %}{{ account.username }}{% endblock %}
+{% block main %}
+
+<p> Hi{{ account.username }}, look at your past post and comments below</p>
+<div class ="cam-grid">
+    <h3>My CamPost</h3>
+    {% if account.cams %}
+        <div class="card-grid">
+            <div class="card">
+                {% for cam in account.cams %}   
+                <br> 
+                <div class="card-img">
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + cam.img) }}"
+                        alt="{{ cam.title }}"
+                    >
+                </div>
+                <div class="card-content">
+                    <p class="card-title">
+                        <a href="{{ url_for('cams.view', cam_id=cam.id) }}">{{ cam.title }}</a>
+                    </p> 
+                    <p card-title>({{ cam.created }})</p>
+                </div>
+                <div class="card-buttons">
+                    <a class="button" href="{{ url_for('cams.edit', cam_id=cam.id) }}">Edit</a>
+                        <!-- <button type="button">Edit</button> -->
+                    <form class="button" method="POST" 
+                        action="{{ url_for('cams.delete', cam_id=cam.id) }}">
+                        <button type="submit">Delete</button>
+                    </form>   
+                </div>
+                <br>
+                {% endfor %}
+        </div>
+    {% endif %}
+    <br>
+    </div>
+    <!-- comment section below -->
+    <br>
+    <div class="card">
+        <br>
+        <h3>Comments </h3>
+        {% if account.comments %}
+            <ul>
+                {% for comment in account.comments %}
+                <li>
+                    <a href="{{ url_for('cams.view', cam_id=comment.cam_id) }}">{{ comment.cam_id }}</a>:
+                    {{ comment.body }}
+                </li>         
+                <br>       
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>There's nothing to see here... yet!</p>
+            
+    {% endif %}
+    </div>
+   
+{% endblock %}

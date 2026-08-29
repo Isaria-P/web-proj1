@@ -1,25 +1,84 @@
 {% extends "base.jinja" %}
 {% block title %}{{ cam.title }}{% endblock %}
 {% block main %}
-<div class="view-container">
+
+<div class="view-grid">
     <!-- <h3>{{ cam.title }}</h3> -->
     
     <!-- <hr> -->
-    <div class="view-image">
-        <!-- <p>{{ cam.id }}</a></p> -->
-        <img 
-            src="{{ url_for('static', filename='uploads/' + cam.img) }}" 
-            alt="{{ cam.title }}">
-        <br>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-img">
+                <!-- <p>{{ cam.id }}</a></p> -->
+                <img 
+                    src="{{ url_for('static', filename='uploads/' + cam.img) }}" 
+                    alt="{{ cam.title }}">
+                    <br>
+            </div>
+            <div class="card-content">     
+                <!-- <p>Image path: {{ cam.img }} : src="{{ cam.upload_file }}</p> -->
+                <h2 class="card-title">{{ cam.title }} // view.jinja</h2>  
+                <p alt="{{ cam.category }}">Category: {{ cam.category }}</p>
+                 <P class="card-author">Author: {{ cam.author_username }}</P>
+                <p alt="{{ cam.content }}">{{ cam.content }}</p>
+                <p>Created: {{ cam.created }}</p>
+            </div> 
+        </div>
     </div>
-    <div class="view-text">     
-        <!-- <p>Image path: {{ cam.img }} : src="{{ cam.upload_file }}</p> -->
-        <h2 alt="{{ cam.title }}">{{ cam.title }} </h2>  
-
-        <p alt="{{ cam.category }}">Category: {{ cam.category }}</p>
-        <hr>
-        <p alt="{{ cam.content }}">{{ cam.content }}</p>
-        <p>Created: {{ cam.created }}</p>
-    </div> 
+    <br>
 </div>
+<br>
+<br>
+<div class="comments-section">
+    
+    <br>
+    {% if session.get("account_id") %}
+        <h3>Leave Your Comment</h3>
+        <form method="POST">
+            <label for="body">Add a comment</label>
+
+            <textarea 
+                name="body"
+                id="body" 
+                maxlength="10000"
+                required 
+            ></textarea>
+            <button type="submit">Add Comment</button>
+        </form>
+        <br>
+
+    {% else %}
+        <p>
+            Log in to leave a comment.
+        </p>
+    {% endif  %}
+
+    <!-- exsisting comments -->
+    <div class="comment-section">
+        <h3>Comments</h3>
+        
+        {% if comments %}
+            {% for comment in comments %}
+                
+                <article class="comment">
+                   
+                    <div class="comment-body">
+                        <p>{{ comment.body }}</p>
+                        <p>by: {{ comment.author_username }}</p>
+                        <p>at: {{ comment.created }}</p>
+                    </div>
+                    
+                    </div>
+                  
+                </article>
+                <br>
+            {% endfor %} 
+        {% else %}
+            <br>
+            <p>There are no comments on this post</p>
+            <br>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}

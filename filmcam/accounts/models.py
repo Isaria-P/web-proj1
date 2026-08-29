@@ -3,27 +3,30 @@ from dataclasses import dataclass
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from filmcam.utils.db import Model
-from filmcam.cams.models import Cam, CamModel
+from filmcam.cams.models import Cam, CamModel, CommentModel
 
 @dataclass
 class Account:
     id: int
+    username: str
     email: str
     password: str
     cams: list[Cam]
+    comments: list
 
 class InvalidCredentialsError(Exception):
+    """Raised when an account fails authentication due to invalid email or password."""
     pass 
 
 class AccountModel(Model):
-    def insert(self, email: str, password: str) -> int:
+    def insert(self,  username: str, email: str, password: str) -> int:
         
         cursor = self.db.execute(
             """
-            INSERT INTO Accounts (email, password)
-                VALUES (?, ?)
+            INSERT INTO Accounts (username, email, password)
+                VALUES (?, ?, ?)
             """,
-            (email, generate_password_hash(password)),
+            (username, email, generate_password_hash(password)),
         )
         self.db.commit()
 
@@ -32,36 +35,52 @@ class AccountModel(Model):
             raise RuntimeError("insert failed: no lastrowid")
         return id
 
-    def get(self, id: int) -> Account:
-            email, password = self.db.execute(
-                "SELECT email, password FROM Accounts WHERE id = ?", (id,)
+    def get(self, accounts_id: int) -> Account | None:
+            row = self.db.execute(
+                """
+                SELECT id, username, email, password 
+                FROM Accounts 
+                WHERE id = ?
+                """,
+                (accounts_id,)
             ).fetchone()
-            cams = CamModel(self.db)
-            return Account(id, email, password, cams.account_cams(id))
+            if row is None:
+                return None
+
+            id, username, email, password = row
+            cams = CamModel(self.db).account_cams(id)
+            comments = CommentModel(self.db).account_comments(id)
+            return Account(id=id, username=username, email=email, password=password, cams=cams, comments=comments)
     
     def authenticate(self, email: str, password: str) -> Account:
-        account = self.db.execute(
-            "SELECT id, email, password FROM Accounts WHERE email = ?",   
-        (email,),
+        row = self.db.execute(
+            "SELECT id, username, email, password FROM Accounts WHERE email = ?",   
+        (email, )
         ).fetchone()
 
         # testing 
-        print("DATABASE ACCOUNT:", account)
+        
 
-        if account is None or not check_password_hash(account[2], password):
+        if row is None or not check_password_hash(row[3], password):
             raise InvalidCredentialsError()
         
-        id, email, password = account
-
+        id, username, email, password = row
+        cams = CamModel(self.db).account_cams(id)
+        comments = CommentModel(self.db).account_comments(id)
         # testing 
-        print("ACCOUNT ID FROM DATABASE:", id)
+        # print("ACCOUNT ID FROM DATABASE:", id)
 
-        cams = CamModel(self.db)
-        return Account(id, email, password, cams.account_cams(id))
+        return Account(id, username, email, password, cams, comments)
 
     def email_exists(self, email: str) -> bool:
         """Does the email exists."""
         account = self.db.execute(
             "SELECT * FROM Accounts WHERE email = ?", (email,)
+        ).fetchone()
+        return account is not None
+    
+    def username_exists(self, username: str) -> bool:
+        account = self.db.execute(
+            "SELECT * FROM Accounts WHERE username = ?", (username,)
         ).fetchone()
         return account is not None
