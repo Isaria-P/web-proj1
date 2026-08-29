@@ -219,26 +219,38 @@ def edit_submit(cam_id):
 def delete(cam_id):
     account_id = session.get("account_id")
     
-    if  account_id is None:
-        flash("You must be looged in to delete a cam post.")
-        return redirect(render_template(""))
+    if account_id is None:
+        flash("You must be logged in to delete a cam post.")
+        return redirect(url_for("accounts.login"))
 
     cams = CamModel(db.get_connection())
     cam = cams.get(cam_id)
 
-    if session.get("cam") is None:
-        flash("Create a cam post to view all your cam post.")
-        return redirect(url_for(cam.create))
+    # Cam doesn't exist
+    if cam is None:
+        flash("Cam post not found.")
+        return redirect(url_for(
+            "accounts.profile",
+            account_id=account_id
+        ))
 
-    # check account_id and author id
+    # Check that the logged-in user owns the post
     if cam.author_id != account_id:
-        flash("Create a cam post to view all your cam post.")
-        return redirect(url_for(cam.create))
+        flash("You can only delete your own cam posts.")
+        return redirect(url_for(
+            "accounts.profile",
+            account_id=account_id
+        ))
 
+    # Delete  post
     cams.delete(cam_id)
+
     flash("Cam post deleted successfully!")
 
-    return render_template("cams/view.jinja")
+    return redirect(url_for(
+        "accounts.profile",
+        account_id=account_id
+    ))
 
 
 @blueprint.get("/category/<category>")
