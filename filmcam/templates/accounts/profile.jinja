@@ -38,18 +38,23 @@
     </div>
     <!-- comment section below -->
     <br>
-    <h3>Comments </h3>
-    {% if account.comments %}
-        <ul>
-            {% for comment in account.comments %}
-            <li>
-                <a href="{{ url_for('cams.view_cam', cam_id=comment.cam_id) }}">#{{ comment.cam_id }}</a>:
-                {{ comment.body }}
-            </li>                
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>There's nothing to see here... yet!</p>
-        
+    <div class="card">
+        <br>
+        <h3>Comments </h3>
+        {% if account.comments %}
+            <ul>
+                {% for comment in account.comments %}
+                <li>
+                    <a href="{{ url_for('cams.view', cam_id=comment.cam_id) }}">{{ comment.cam_id }}</a>:
+                    {{ comment.body }}
+                </li>         
+                <br>       
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>There's nothing to see here... yet!</p>
+            
     {% endif %}
+    </div>
+   
 {% endblock %}

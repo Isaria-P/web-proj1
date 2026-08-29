@@ -6,6 +6,9 @@ from filmcam.utils import db
 from config import Config
 import os
 
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     
@@ -24,6 +27,9 @@ def create_app():
     
     app.teardown_appcontext(db.close_connection)
 
+    
     return app
 
-    
+
+
+

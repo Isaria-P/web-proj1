@@ -32,7 +32,7 @@ h2, h3 {
 }
 
 header, nav, main, footer {
-    padding: 3px calc((100% - 1000px) / 2) 0;
+    /* padding: 3px calc((100% - 1000px) / 2) 0; */
 }
 
 main {
@@ -55,7 +55,7 @@ h1 a {
 
 h2 {
     font-size: 22px;
-    margin-bottom: 36px;
+    margin: 26px;
     position: relative;
     top: -9px;
 }
@@ -63,6 +63,7 @@ h2 {
 a {
     color: #e9e4bd;
     text-decoration: none;
+    /* 2a2a2a */
 }
 
 textarea, input:not([type="submit"]) {
@@ -71,17 +72,20 @@ textarea, input:not([type="submit"]) {
 }
 
 header {
-    background-image: -webkit-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
-    background-image: -moz-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
-    background-image: -ms-linear-gradient(left, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
-    background-image: linear-gradient(to right, #34495e, #34495e 25%, #9b59b6 25%, #9b59b6 35%, #3498db 35%, #3498db 45%, #62cb31 45%, #62cb31 55%, #ffb606 55%, #ffb606 65%, #e67e22 65%, #e67e22 75%, #e74c3c 85%, #e74c3c 85%, #c0392b 85%, #c0392b 100%);
-    background-size: 100% 6px;
+    
     background-repeat: no-repeat;
-    border-bottom: 1px solid #e9e4bd;
+    border-bottom: 1px solid #e9e4bd; 
     overflow: auto;
-    padding-top: 23px;
-    padding-bottom: 23px;
+    padding: 23px;
     text-align: center;
+    border-bottom: 8px solid #131313;
+    background-image: repeating-linear-gradient(
+        90deg,
+        #131313,
+        #131313 10px,
+        #939090 30px,
+        #6b6565 50px
+    );
 }
 
 header a {
@@ -94,7 +98,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 12px 30px;
-    border-bottom: 1px solid #e9e4bd;
+    /* border-bottom: 1px solid #e9e4bd; */
     background: #131313;
     height: 60px;
     color: #e9e4bd;
@@ -103,7 +107,7 @@ nav {
 nav a {
     color: #e9e4bd;
     text-decoration: none;
-    margin: 0 12px;
+    /* margin: 0 12px; */
     font-weight: 500;
     transition: color 0.2s ease, border-bottom 0.2s ease;
 }
@@ -261,26 +265,29 @@ div.error {
 .card-grid {
     width: min(1200px, 90%);
     margin: 0 auto;
-
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    /* grid-template-rows: 400px; */
+    flex-direction: row;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 3fr));
+    /* border: 1px solid #e9e4bd; */
     /* padding: clamp(10px, 20vw, 40px); */
-    gap: 10px;
-
+    gap: 24px;
 }
 
 .card {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
     width: 100%;
-    border: 1px solid #e9e4bd;
     border-radius: 10px;
     overflow: hidden;
     display: block;
-    /* background: white; */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+   
+    background-color: #1e1e1e;
+    padding: 24px;
+    border: 1px solid #2a2a2a; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); 
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-img {
@@ -322,7 +329,9 @@ div.error {
 }
 
 .card-title a {
-    color: #333;
+    /* color: #333; */
+        color: #e9e4bd;
+
     text-decoration: underline;
 }
 .card-text h3 {
@@ -348,8 +357,6 @@ div.error {
     /* padding: clamp(10px, 20vw, 40px); */
     gap: 10px;
     display: flex;
-
-
 }
 
 .view-text {
@@ -377,6 +384,19 @@ div.error {
     overflow: hidden;
 
 }
+.category-nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: clamp(12px, 2vw, 24px);
+    /* border-bottom: 2px dotted #e9e4bd; */
+
+}
+
+.category-nav a {
+    padding-bottom: 6px;
+    border-bottom: 2px dotted #e9e4bd;
+}
 
 footer {
     border-top: 1px solid #e9e4bd;
@@ -400,9 +420,18 @@ footer {
     .cam-grid {
         grid-template-columns: 1fr;
     }
+    /* .category-nav a{
+        display: none;
+    } */
 }
 
-
+hr {
+    border: none;
+    height: 0.5px;
+    background-color: #e9e4bd;
+    width: 25%;
+    margin: 20px auto;
+}
 
 /* cam container */
 .cam-container {
@@ -436,8 +465,18 @@ footer {
 }
 
 /* Comments section */
+.comment-form {
+    margin: 40px;
+}
 .comments-section {
+    padding: 20px;
+    
     margin-top: 2rem;
+    width: min(1200px, 90%);
+    margin: 0 auto;
+    border: 1px solid #e9e4bd;
+    border-radius: 8px;
+
 }
 
 .comment {

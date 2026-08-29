@@ -35,14 +35,22 @@ class AccountModel(Model):
             raise RuntimeError("insert failed: no lastrowid")
         return id
 
-    def get(self, id: int) -> Account:
+    def get(self, accounts_id: int) -> Account | None:
             row = self.db.execute(
-                "SELECT id, username, email, password FROM Accounts WHERE id = ?", (id,)
+                """
+                SELECT id, username, email, password 
+                FROM Accounts 
+                WHERE id = ?
+                """,
+                (accounts_id,)
             ).fetchone()
+            if row is None:
+                return None
+
             id, username, email, password = row
             cams = CamModel(self.db).account_cams(id)
             comments = CommentModel(self.db).account_comments(id)
-            return Account(id, username, email, password, cams, comments)
+            return Account(id=id, username=username, email=email, password=password, cams=cams, comments=comments)
     
     def authenticate(self, email: str, password: str) -> Account:
         row = self.db.execute(

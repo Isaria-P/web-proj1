@@ -1,0 +1,27 @@
+{% extends "base.jinja" %}
+{% block title %}Edit Comment{% endblock %}
+
+{% block main %}
+<h2>Edit Comment</h2>
+
+<form 
+    method="POST"
+    action="{{ url_for('cams.comment_edit_submit',
+    comment_id=comment.id) }}"
+    >
+
+    <label for="body">Comment</label>
+    <textarea name="body" id="body" maxlength="10000" required>
+        {{ comment.body }}
+    </textarea>
+
+    <button type="submit">Save Changes</button>
+
+</form>
+
+<a href="{{ url_for('accounts.profile', account_id=session['account_id']) }}">
+    Cancel
+</a>
+
+{% endblock %}
+

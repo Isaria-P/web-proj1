@@ -19,20 +19,67 @@
                 <!-- <p>Image path: {{ cam.img }} : src="{{ cam.upload_file }}</p> -->
                 <h2 class="card-title">{{ cam.title }} // view.jinja</h2>  
                 <p alt="{{ cam.category }}">Category: {{ cam.category }}</p>
+                 <P class="card-author">Author: {{ cam.author_username }}</P>
                 <p alt="{{ cam.content }}">{{ cam.content }}</p>
                 <p>Created: {{ cam.created }}</p>
-                <p>yaaaaa</p>
             </div> 
         </div>
     </div>
-    <hr>
+    <br>
+</div>
+<br>
+<br>
+<div class="comments-section">
+    
+    <br>
+    {% if session.get("account_id") %}
+        <h3>Leave Your Comment</h3>
+        <form method="POST">
+            <label for="body">Add a comment</label>
+
+            <textarea 
+                name="body"
+                id="body" 
+                maxlength="10000"
+                required 
+            ></textarea>
+            <button type="submit">Add Comment</button>
+        </form>
+        <br>
+
+    {% else %}
+        <p>
+            Log in to leave a comment.
+        </p>
+    {% endif  %}
+
+    <!-- exsisting comments -->
+    <div class="comment-section">
+        <h3>Comments</h3>
+        
+        
+        {% if comments %}
+            {% for comment in comments %}
+                
+                <article class="comment">
+                   
+                    <div class="comment-body">
+                        <p>{{ comment.body }}</p>
+                        <p>by: {{ comment.author_username }}</p>
+                        <p>at: {{ comment.created }}</p>
+                    </div>
+                    
+                    </div>
+                  
+                </article>
+                <br>
+            {% endfor %} 
+        {% else %}
+            <br>
+            <p>There are no comments on this post</p>
+            <br>
+        {% endif %}
+    </div>
 </div>
 
-<div class="view-grid">
-<!-- Comment section -->
-    <h2>Comments</h2>
-    {% if sessions.get("account_id") %}
-        <div class=""></div>
-
-</div>
 {% endblock %}
